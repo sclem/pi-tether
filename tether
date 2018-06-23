@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ "$IFACE" = lo ]; then
+        exit 0
+fi
+
+iptables -t nat -A POSTROUTING -o usb0 -s 192.168.1.0/24 -j MASQUERADE
+iptables -t mangle -A POSTROUTING -j TTL --ttl-set 65
+
+#start usb tether on phone
+adb shell su -c service call connectivity 33 i32 1 &>> /var/log/messages
