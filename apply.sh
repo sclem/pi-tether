@@ -1,19 +1,17 @@
 #!/bin/bash
 
-set -e
+(
+cat <<EOF
+net.bridge.bridge-nf-call-arptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+) | sudo tee -a /etc/sysctl.conf
 
-apt-get install android-tools-adb android-tools-fastboot dnsmasq
+cp interfaces /etc/network/interfaces
 
-echo "
-interface eth0
-static ip_address=192.168.1.1/24
-static domain_name_servers=192.168.1.1
-" >> /etc/dhcpcd.conf
+cp tether /usr/local/bin/
 
-echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+cp tether.service /etc/systemd/system/
 
-cp tether /etc/network/if-up.d/
-
-chmod 755 /etc/network/if-up.d/tether
-
-echo "success, reboot pi"
+sudo systemctl enable tether.service

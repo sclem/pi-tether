@@ -1,0 +1,17 @@
+[Unit]
+Description=start tethering
+Before=network-pre.target
+Wants=network-pre.target
+Requires=local-fs.target
+After=local-fs.target
+
+[Service]
+Type=oneshot
+SyslogIdentifier=tether
+StandardOutput=syslog
+StandardError=syslog
+ExecStart=/usr/local/bin/tether
+RemainAfterExit=yes
+
+[Install]
+WantedBy=network.target
